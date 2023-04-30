@@ -1,0 +1,4 @@
+temporal:
+  port: 7233
+  host: localhost
+  reconnect: 3
