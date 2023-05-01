@@ -1,17 +1,22 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
 
 	"github.com/go-temporal-laboratory/internal"
+	"github.com/go-temporal-laboratory/internal/activities"
 	"github.com/go-temporal-laboratory/internal/services"
 	"github.com/google/uuid"
+	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
 	"go.temporal.io/sdk/workflow"
 )
 
 func main() {
 	defer services.DisconnectTemporal()
+	temporalClient := services.ConnectTemporal()
 
 	// Instantiate singleton config
 	internal.GetConfig()
@@ -30,5 +35,25 @@ func main() {
 	temporal.RegisterWorkflowWithOptions(services.PaymentWorkFlow, temporalWorkerOptions)
 
 	// Register Activities
+	activities := &activities.PaymentActivity{}
+	temporal.RegisterActivity(activities.StartTransaction)
+	temporal.RegisterActivity(activities.CheckBalance)
+	temporal.RegisterActivity(activities.ReserveFunds)
+	temporal.RegisterActivity(activities.WithdrawFunds)
+
+	// RUN IT
+	err := temporal.Run(worker.InterruptCh())
+
+	if err != nil {
+		log.Fatalln("Unable to start Worker", err)
+	}
+
+	workflowOptions := client.StartWorkflowOptions{}
+	workflowParam := services.PaymentWorkFlowParam{
+		User:   uuid.New(),
+		Amount: 500,
+	}
+
+	temporalClient.ExecuteWorkflow(context.Background(), workflowOptions, services.PaymentWorkFlow, &workflowParam)
 
 }

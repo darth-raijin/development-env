@@ -14,13 +14,9 @@ type PaymentWorkFlowResult struct {
 }
 
 type PaymentWorkFlowParam struct {
-	user   uuid.UUID
-	amount float32
+	User   uuid.UUID
+	Amount float32
 }
-
-var (
-	user = uuid.New()
-)
 
 func PaymentWorkFlow(ctx workflow.Context, param PaymentWorkFlowParam) (PaymentWorkFlowResult, error) {
 	var resultHolder PaymentWorkFlowResult
@@ -31,11 +27,11 @@ func PaymentWorkFlow(ctx workflow.Context, param PaymentWorkFlowParam) (PaymentW
 	}
 
 	ctx = workflow.WithActivityOptions(ctx, activityOptions)
+
+	// Setting Param for TX
 	activityParams := activities.PaymentActivity{
 		Transaction_id: uuid.New(),
 		Status:         activities.Created,
-		Amount:         500,
-		User:           user,
 	}
 
 	workflow.GetLogger(ctx).Info(fmt.Sprintf("%v: %v",
@@ -43,6 +39,7 @@ func PaymentWorkFlow(ctx workflow.Context, param PaymentWorkFlowParam) (PaymentW
 		activityParams.Amount))
 
 	// Activity flow starts
+	workflow.ExecuteActivity(ctx, activityParams.StartTransaction)
 	workflow.ExecuteActivity(ctx, activityParams.CheckBalance)
 	workflow.ExecuteActivity(ctx, activityParams.ReserveFunds)
 	workflow.ExecuteActivity(ctx, activityParams.WithdrawFunds)
