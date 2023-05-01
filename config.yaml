@@ -1,4 +1,6 @@
 temporal:
   port: 7233
   host: localhost
-  reconnect_delay: 3
+  reconnect-delay: 3
+nets:
+  base-url: https://api.payments.test.nets.eu
