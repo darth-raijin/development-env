@@ -40,16 +40,28 @@ func PaymentWorkFlow(ctx workflow.Context, param PaymentWorkFlowParam) (PaymentW
 
 	// Activity flow starts
 	workflow.GetLogger(ctx).Info("Started transaction")
-	workflow.ExecuteActivity(ctx, activityParams.StartTransaction).Get(ctx, &activityParams)
+	err := workflow.ExecuteActivity(ctx, "StartTransaction", activityParams).Get(ctx, &activityParams)
+	if err != nil {
+		return resultHolder, err
+	}
 
 	workflow.GetLogger(ctx).Info("Checking balance")
-	workflow.ExecuteActivity(ctx, activityParams.CheckBalance).Get(ctx, &activityParams)
+	err = workflow.ExecuteActivity(ctx, "CheckBalance", activityParams).Get(ctx, &activityParams)
+	if err != nil {
+		return resultHolder, err
+	}
 
 	workflow.GetLogger(ctx).Info("Reserving funds")
-	workflow.ExecuteActivity(ctx, activityParams.ReserveFunds).Get(ctx, &activityParams)
+	err = workflow.ExecuteActivity(ctx, "ReserveFunds", activityParams).Get(ctx, &activityParams)
+	if err != nil {
+		return resultHolder, err
+	}
 
 	workflow.GetLogger(ctx).Info("Withdrawing funds")
-	workflow.ExecuteActivity(ctx, activityParams.WithdrawFunds).Get(ctx, &activityParams)
+	err = workflow.ExecuteActivity(ctx, "WithdrawFunds", activityParams).Get(ctx, &activityParams)
+	if err != nil {
+		return resultHolder, err
+	}
 
 	return resultHolder, nil
 }

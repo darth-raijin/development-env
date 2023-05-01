@@ -21,7 +21,7 @@ func main() {
 	internal.GetConfig()
 
 	// Setting up to start a Workflow -> Workflow is a set of tasks (activities)
-	taskQueue := fmt.Sprintf("%v-payment-flow-stripe-api", uuid.New()) // map uuid to stripe
+	taskQueue := "payment-workflow"
 	temporal := worker.New(
 		temporalClient,
 		taskQueue,
@@ -45,8 +45,9 @@ func main() {
 	}
 
 	// Start the Workflow Execution
+	workflowId := fmt.Sprintf("%v-payment-flow-stripe-api", uuid.New()) // map uuid to stripe
 	workflowOptions := client.StartWorkflowOptions{
-		ID:        "payment-workflow",
+		ID:        workflowId,
 		TaskQueue: taskQueue,
 	}
 	workflowParam := services.PaymentWorkFlowParam{
@@ -61,4 +62,5 @@ func main() {
 
 	log.Println("Started Workflow Execution", we.GetID(), we.GetRunID())
 
+	select {}
 }
