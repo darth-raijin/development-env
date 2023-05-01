@@ -11,7 +11,6 @@ import (
 	"github.com/google/uuid"
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/worker"
-	"go.temporal.io/sdk/workflow"
 )
 
 func main() {
@@ -22,17 +21,15 @@ func main() {
 	internal.GetConfig()
 
 	// Setting up to start a Workflow -> Workflow is a set of tasks (activities)
+	taskQueue := fmt.Sprintf("%v-payment-flow-stripe-api", uuid.New()) // map uuid to stripe
 	temporal := worker.New(
-		services.ConnectTemporal(),
-		fmt.Sprintf("%v-payment-flow-stripe-api", uuid.New()), // map uuid
-		worker.Options{})
-
-	temporalWorkerOptions := workflow.RegisterOptions{
-		Name: "Purchase item workflow",
-	}
+		temporalClient,
+		taskQueue,
+		worker.Options{},
+	)
 
 	// Register Workflows -> TODO find optimization
-	temporal.RegisterWorkflowWithOptions(services.PaymentWorkFlow, temporalWorkerOptions)
+	temporal.RegisterWorkflow(services.PaymentWorkFlow)
 
 	// Register Activities
 	activities := &activities.PaymentActivity{}
@@ -42,18 +39,26 @@ func main() {
 	temporal.RegisterActivity(activities.WithdrawFunds)
 
 	// RUN IT
-	err := temporal.Run(worker.InterruptCh())
-
+	err := temporal.Start()
 	if err != nil {
 		log.Fatalln("Unable to start Worker", err)
 	}
 
-	workflowOptions := client.StartWorkflowOptions{}
+	// Start the Workflow Execution
+	workflowOptions := client.StartWorkflowOptions{
+		ID:        "payment-workflow",
+		TaskQueue: taskQueue,
+	}
 	workflowParam := services.PaymentWorkFlowParam{
 		User:   uuid.New(),
 		Amount: 500,
 	}
 
-	temporalClient.ExecuteWorkflow(context.Background(), workflowOptions, services.PaymentWorkFlow, &workflowParam)
+	we, err := temporalClient.ExecuteWorkflow(context.Background(), workflowOptions, services.PaymentWorkFlow, workflowParam)
+	if err != nil {
+		log.Fatalln("Unable to start Workflow Execution", err)
+	}
+
+	log.Println("Started Workflow Execution", we.GetID(), we.GetRunID())
 
 }

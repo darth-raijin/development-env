@@ -16,8 +16,6 @@ func ConnectTemporal() client.Client {
 	once.Do(func() {
 		var err error
 
-		fmt.Println(internal.GetConfig().Temporal.Host)
-
 		connection_url := fmt.Sprintf("%v:%v", internal.GetConfig().Temporal.Host, internal.GetConfig().Temporal.Port)
 		temporalClient, err = client.Dial(client.Options{
 			HostPort: connection_url,
