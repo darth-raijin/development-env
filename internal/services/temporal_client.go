@@ -16,17 +16,19 @@ func ConnectTemporal() client.Client {
 	once.Do(func() {
 		var err error
 
-		hostport := fmt.Sprintf("%v:%v",
-			internal.GetConfig().Temporal.Port,
-			internal.GetConfig().Temporal.Port)
+		fmt.Println(internal.GetConfig().Temporal.Host)
 
+		connection_url := fmt.Sprintf("%v:%v", internal.GetConfig().Temporal.Host, internal.GetConfig().Temporal.Port)
 		temporalClient, err = client.Dial(client.Options{
-			HostPort: hostport,
+			HostPort: connection_url,
 		})
 		if err != nil {
 			log.Fatalln("Failed connecting to Temporal server", err)
+		} else {
+			log.Default().Println("Connected to Temporal server")
 		}
 	})
+
 	return temporalClient
 }
 func DisconnectTemporal() {

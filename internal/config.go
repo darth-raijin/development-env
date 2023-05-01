@@ -9,8 +9,9 @@ import (
 
 type Config struct {
 	Temporal struct {
-		Port string
-		Host string
+		Port            string
+		Host            string
+		reconnect_delay int
 	}
 }
 
