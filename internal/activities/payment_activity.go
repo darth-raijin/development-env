@@ -13,8 +13,10 @@ type PaymentActivity struct {
 	user           uuid.UUID
 }
 
-func (a *PaymentActivity) CheckBalance(ctx context.Context)
+func (a *PaymentActivity) CheckBalance(ctx context.Context, param PaymentActivity) {
 
-func (a *PaymentActivity) ReserveFunds(ctx context.Context)
+}
 
-func (a *PaymentActivity) WithdrawFunds(ctx context.Context)
+func (a *PaymentActivity) ReserveFunds(ctx context.Context, param PaymentActivity)
+
+func (a *PaymentActivity) WithdrawFunds(ctx context.Context, param PaymentActivity)
