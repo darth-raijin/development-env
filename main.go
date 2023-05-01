@@ -26,5 +26,9 @@ func main() {
 		Name: "Purchase item workflow",
 	}
 
+	// Register Workflows -> TODO find optimization
 	temporal.RegisterWorkflowWithOptions(services.PaymentWorkFlow, temporalWorkerOptions)
+
+	// Register Activities
+
 }
