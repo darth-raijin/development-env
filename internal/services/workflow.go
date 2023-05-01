@@ -9,9 +9,7 @@ import (
 	"go.temporal.io/sdk/workflow"
 )
 
-type PaymentWorkFlowResult struct {
-	state string
-}
+type PaymentWorkFlowResult struct{}
 
 type PaymentWorkFlowParam struct {
 	User   uuid.UUID
