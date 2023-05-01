@@ -45,7 +45,7 @@ func main() {
 	}
 
 	// Start the Workflow Execution
-	workflowId := fmt.Sprintf("%v-payment-flow-stripe-api", uuid.New()) // map uuid to stripe
+	workflowId := fmt.Sprintf("%v-payment-flow-nets-api", uuid.New()) // map uuid to stripe
 	workflowOptions := client.StartWorkflowOptions{
 		ID:        workflowId,
 		TaskQueue: taskQueue,
