@@ -31,6 +31,7 @@ NETS_API_KEY=
 NETS_SECRET_KEY=
 ```
 
+Fetch the tokens from: https://portal.dibspayment.eu/integration
 
 
 ## Additional Resources

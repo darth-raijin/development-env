@@ -3,4 +3,4 @@ temporal:
   host: localhost
   reconnect-delay: 3
 nets:
-  base-url: https://api.payments.test.nets.eu
+  base-url: https://test.api.dibspayment.eu
