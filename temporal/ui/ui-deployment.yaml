@@ -1,0 +1,27 @@
+kind apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: temporal-ui
+spec:
+  selector:
+    matchLabels:
+      app: temporal-ui
+  template:
+    metadata:
+      labels:
+        app: temporal-ui
+    spec:
+      containers:
+      - name: temporal-ui
+        image: temporalio/web
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8088
+        env:
+          - name: TEMPORAL_GRPC_ENDPOINT
+            value: "temporal-server:7233"
+          - name: TEMPORAL_PERMIT_WRITE_API
+            value: "true"
