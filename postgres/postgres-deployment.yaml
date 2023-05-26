@@ -20,13 +20,16 @@ spec:
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
-              name: db-secrets
+              name: postgres-secrets
               key: username
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: db-secrets
+              name: postgres-secrets
               key: password
         ports:
         - containerPort: 5432
-        type: ClusterIP
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "250m"

@@ -38,5 +38,6 @@ func GetConfig() *Config {
 	})
 
 	log.Default().Print("Fetched config")
+	log.Default().Print(configHolder)
 	return configHolder
 }
