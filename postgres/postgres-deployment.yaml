@@ -14,6 +14,9 @@ spec:
       containers:
       - name: postgres
         image: postgres:11
+        volumeMounts:
+            - mountPath: /pgdata
+              name: data-volume
         env:
         - name: POSTGRES_DB
           value: temporal
@@ -33,3 +36,7 @@ spec:
           limits:
             memory: "500Mi"
             cpu: "250m"
+      volumes:  
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: pvc-pg-data
