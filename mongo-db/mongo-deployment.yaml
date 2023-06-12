@@ -60,6 +60,5 @@ spec:
       volumes:
         - name: docker-entry
           configMap:
-            name: mongo-config
+            name: mongo-init
           
-  volumeClaimTemplates: []
