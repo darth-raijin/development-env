@@ -17,6 +17,8 @@ spec:
         volumeMounts:
           - mountPath: /docker-entrypoint-initdb.d
             name: docker-entry
+        volumes:
+          - name: docker-entry
         resources:
           limits:
             memory: "128Mi"
@@ -27,9 +29,33 @@ spec:
         - name: MONGO_INITDB_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              key: MONGO_INITDB_ROOT_USERNAME
+              key: MONGO_INITDB_ROOT_PASSWORD
               name: mongo-secrets
         ports:
         - containerPort: 27017
       volumes:
         - name: docker-entry
+      livenessProbe:
+                exec:
+                  command:
+                    - mongo
+                    - --disableImplicitSessions
+                    - --eval
+                    - "db.adminCommand('ping')"
+                initialDelaySeconds: 30
+                periodSeconds: 10
+                timeoutSeconds: 5
+                successThreshold: 1
+                failureThreshold: 6
+      readinessProbe:
+                exec:
+                  command:
+                    - mongo
+                    - --disableImplicitSessions
+                    - --eval
+                    - "db.adminCommand('ping')"
+                initialDelaySeconds: 30
+                periodSeconds: 10
+                timeoutSeconds: 5
+                successThreshold: 1
+                failureThreshold: 6
