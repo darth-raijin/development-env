@@ -18,10 +18,7 @@ spec:
           image: mongo:7.0-rc-jammy
           ports:
             - containerPort: 27017
-          resources:
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
+              hostPort: 27017
           volumeMounts:
             - name: docker-entry
               mountPath: /docker-entrypoint-initdb.d
@@ -29,34 +26,12 @@ spec:
             - name: MONGO_INITDB_ROOT_USERNAME
               value: admin
             - name: MONGO_INITDB_ROOT_PASSWORD
+              value: password123
+            - name: MONGO_INITDB_ROOT_PASSWOsRD
               valueFrom:
                 secretKeyRef:
                   key: MONGO_INITDB_ROOT_PASSWORD
                   name: mongo-secrets
-          livenessProbe:
-            exec:
-              command:
-                - mongo
-                - --disableImplicitSessions
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
-          readinessProbe:
-            exec:
-              command:
-                - mongo
-                - --disableImplicitSessions
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
       volumes:
         - name: docker-entry
           configMap:

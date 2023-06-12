@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-express
+  labels:
+    app: mongo-express
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-express
+  template:
+    metadata:
+      labels:
+        app: mongo-express
+    spec:
+      containers:
+      - name: mongo-express
+        image: mongo-express:latest
+        ports:
+        - containerPort: 27018
+          hostPort: 27018
+        env:
+        - name: ME_CONFIG_MONGODB_SERVER
+          value: mongodb
+        - name: ME_CONFIG_MONGODB_AUTH_USERNAME
+          value: admin
+        - name: ME_CONFIG_MONGODB_AUTH_PASSWORD
+          value: password123
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-express-service
+spec:
+  selector:
+    app: mongo-express
+  ports:
+    - protocol: TCP
+      port: 27018
+      targetPort: 27018
+  type: NodePort
